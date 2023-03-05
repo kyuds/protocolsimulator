@@ -1,10 +1,9 @@
 # Node Module for Protocol Simulation
 
-from numpy import random
-
 class Node:
-    def __init__(self, protocol, capacity, fillFactor, 
+    def __init__(self, id, protocol, capacity, fillFactor, 
                  retrievalFactor, statCollector):
+        self.id = id
         self.protocol = protocol
         self.capacity = capacity
         self.fillFactor = fillFactor
