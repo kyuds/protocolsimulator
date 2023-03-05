@@ -1,0 +1,4 @@
+Chord node class:
+- finger table
+- successor method
+- predecessor method
