@@ -24,9 +24,19 @@ PoT node class:
 statcollector.py:
 - record number of timesteps it takes for Chord vs PoT to find empty node
     - for now assume every operation is the same time? (e.g. chord asking one node's fingertable = PoT asking two random nodes)
-    - 
+- to clarify
+    1. Is successor(n) in chord == time to query two random nodes in PoT? (also when PoT queries two nodes is it 2 * time taken
+    to query one node or does it happen in parallel?)
+    2. When a node is found, is it directly notified to the head (i.e. we can assume 0 latency? If not how do we go about this)
 - todo later
     - dictionaries to record node failures, evictions
+    - plotting data and everything
 
 Things to consider:
-- identifier circle being completely full -> successor/predecessor method and .node in chord become pointless
+- identifier circle being completely full (unrealistic) -> successor/predecessor method and .node in chord become pointless
+- Infiniswap mentions that there is high probability memory usage won't change drastically for low periods of time
+
+General architecture:
+- chord.py and pot.py are protocols for chord and power of two respectively
+- main.py runs the chord and pot protocols until a node is found and head node is notified
+- statcollector.py collects stats
