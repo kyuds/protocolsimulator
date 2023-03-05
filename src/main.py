@@ -1,9 +1,8 @@
+# library imports
 import argparse
 
-from node import Node
+# custom imports
 from statcollector import StatCollector
-from chord import chord
-from pot import pot
 
 def run():
     # parse arguments
@@ -16,18 +15,13 @@ def run():
     parser.add_argument("--retrieval-factor", default=0.2, type=float, help="Probability of object restore")
     args = parser.parse_args()
 
-    sc = StatCollector()
-
-    def createNode(id, args, sc):
-        if args.protocol == "chord":
-            p = chord
-        else:
-            p = pot
-        return Node(id, p, args.capacity, args.fill_factor, args.retrieval_factor, sc)
-        
-    nodes = [createNode(id, args, sc) for id in range(args.num_nodes)]
-
-    # somehow do stuff
+    if args.protocol == "chord":
+        pass
+    elif args.protocol == "pot":
+        pass
+    else:
+        print("Wrong protocol specified: ", args.protocol)
+        return
 
 if __name__ == "__main__":
     run()
