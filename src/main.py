@@ -1,8 +1,10 @@
 # library imports
 import argparse
+import numpy as np
 
 # custom imports
 from statcollector import StatCollector
+from pot import PNode, pnodeFactory
 
 def run():
     # parse arguments
@@ -18,7 +20,12 @@ def run():
     if args.protocol == "chord":
         pass
     elif args.protocol == "pot":
-        pass
+        # initialize a single random generator for POT decision making.
+        rnd = np.random.default_rng(12345)
+        sc = StatCollector(args.latency)
+        allNodes = [pnodeFactory(i, args, sc, rnd) for i in range(args.num_nodes)]
+        for idx, nd in enumerate(allNodes):
+            nd.addNodeInfo([n for i, n in enumerate(allNodes) if i != idx])
     else:
         print("Wrong protocol specified: ", args.protocol)
         return

@@ -1,7 +1,8 @@
 # Class for Collecting Various Statistics
 
 class StatCollector:
-    def __init__(self):
+    def __init__(self, latency):
+        self.latency = latency
         self.data = []
     
     def aggregate(self):
