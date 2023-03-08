@@ -12,6 +12,8 @@ class PNode:
         self.statCollector = statCollector
 
         # random variables
+        # rnd : POT random chooser
+        # rs  : Node memory oscillator
         self.rnd = rnd
         self.rs = rs
 
@@ -24,8 +26,12 @@ class PNode:
         self.priorityNodes = []
         self.spilledNodes = []
     
-    def addNodeInfo(self, nodesList):
-        self.priorityNodes.extend(nodesList)
+    # nd can both be a list of nodes or just a single one. 
+    def addNodeInfo(self, nd):
+        if (type(nd) == list):
+            self.priorityNodes.extend(nd)
+        else:
+            self.priorityNodes.append(nd)
     
     # samples two random numbers from 0 ~ bnd (exclusive)
     def twoRandomSample(self, bnd):
@@ -41,7 +47,10 @@ class PNode:
     def oscillate(self):
         pass
 
+    def run(self):
+        pass
+
 # helper function to create PNodes
-def pnodeFactory(id, args, statCollector, rand):
+def pnodeFactory(id, args, statCollector, rnd, rs):
     return PNode(id, args.capacity, args.fill_factor, 
-                 args.retrieval_factor, statCollector, rand)
+                 args.retrieval_factor, statCollector, rnd, rs)

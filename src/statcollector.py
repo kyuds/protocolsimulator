@@ -15,3 +15,6 @@ class StatCollector:
             totalStats[key] = st
 
         return totalStats
+
+    def logStats(self):
+        print("Results:")

@@ -23,27 +23,34 @@ def run():
     # settings
     op = args.oscillate_period
     rs = np.random.default_rng(1000)
+    nn = args.num_nodes
 
+    # setup for protocol type
     if args.protocol == "chord":
-        # follow template as shown in below. Lets try to have the same formatting. 
-        # unlike POT, Chord only needs one random variable (for memory oscillation)
-        # so you just need to add "rs", which is the oscillator variable. 
-        allNodes = []
-        pass
+        sc = StatCollector(args.latency)
+        allNodes = [cnodeFactory(i, args, sc, rs) for i in range(nn)]
+        # add other node info that is necessary... idk how to initialize
     elif args.protocol == "pot":
         # initialize a single random generator for POT decision making.
         rnd = np.random.default_rng(12345)
         sc = StatCollector(args.latency)
-        allNodes = [pnodeFactory(i, args, sc, rnd, rs) for i in range(args.num_nodes)]
+        allNodes = [pnodeFactory(i, args, sc, rnd, rs) for i in range(nn)]
         for idx, nd in enumerate(allNodes):
             nd.addNodeInfo([n for i, n in enumerate(allNodes) if i != idx])
     else:
-        print("Wrong protocol specified: ", args.protocol)
+        print("Unknown protocol specified: ", args.protocol)
         return
 
-    for _ in range(args.total_epochs):
+    # run simulation
+    for epc in range(args.total_epochs):
         for nd in allNodes:
-            pass
+            nd.run()
+        if epc != 0 and epc % op == 0:
+            for nd in allNodes:
+                nd.oscillate()
+    
+    # log statistics 
+    sc.logStats()
 
 if __name__ == "__main__":
     run()

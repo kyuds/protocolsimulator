@@ -15,5 +15,5 @@ class CNode:
 
         # node state
 
-def cnodeFactory():
+def cnodeFactory(id, args, statCollector, rs):
     return None
