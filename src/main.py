@@ -1,6 +1,11 @@
 # library imports
 import argparse
 import numpy as np
+import random
+
+# class imports
+import chord
+import pot
 
 # custom imports
 from statcollector import StatCollector
@@ -30,6 +35,30 @@ def run():
         sc = StatCollector(args.latency)
         allNodes = [cnodeFactory(i, args, sc, rs) for i in range(nn)]
         # add other node info that is necessary... idk how to initialize
+
+        # for now assume identifier circle has length 2nn
+        idCircle = [0]*nn
+        nodeIDs = random_combinations(range(2 * nn), nn) # returns random list of indices for the nn nodes
+        for i in range(nn):
+            currentNode = chord.CNode(nodeIDs[i], args.capacity, args.fill_factor,
+                                      args.retrieval_factor, sc, rs) # create chord instance with unique id
+            idCircle[nodeIDs[i]] = currentNode
+        
+        # iterate through idCircle and set successors of every node
+        currNode = 0
+        for i in range(len(idCircle)):
+            if idCircle[i] != 0 and currNode == 0:
+                currNode = idCircle[i]
+            elif idCircle[i] != 0 and currNode != 0:
+                # currNode.ftable.get(endpoints[i])
+                # update fingertable dictionary's 3rd entry in list to successor (i.e. idCircle[i])
+                pass
+
+
+        
+            
+
+
     elif args.protocol == "pot":
         # initialize a single random generator for POT decision making.
         rnd = np.random.default_rng(12345)
@@ -51,6 +80,15 @@ def run():
     
     # log statistics 
     sc.logStats()
+
+# CHORD: helper function for randomly picking ids for identifier circle
+# id_length = [0, length of identifier circle]
+# num_nodes = # of nodes
+def random_combinations(id_length, num_nodes):
+    idCircle = list(id_length)
+    n = len(id_length)
+    random_indices = random.sample(range(n), num_nodes)
+    return list(idCircle[i] for i in random_indices)
 
 if __name__ == "__main__":
     run()
