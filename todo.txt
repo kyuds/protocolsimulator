@@ -20,6 +20,7 @@ PoT node class:
 - random sampling method?
 - batch eviction (as noted in infiniswap)
 - state changer
+- how accurately to simulate?
 
 statcollector.py:
 - record number of timesteps it takes for Chord vs PoT to find empty node

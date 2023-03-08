@@ -32,7 +32,7 @@ class CNode:
     def predecessor(self):
         return self.predecessor
 
-def cnodeFactory():
+def cnodeFactory(id, args, statCollector, rs):
     return None
 
 
