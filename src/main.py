@@ -36,27 +36,45 @@ def run():
         allNodes = [cnodeFactory(i, args, sc, rs) for i in range(nn)]
         # add other node info that is necessary... idk how to initialize
 
-        # for now assume identifier circle has length 2nn
-        idCircle = [0]*nn
+        # for now assume identifier circle has length (smallest power of 2 greater than 2nn)
+        circleLength, m = idCircleLength(nn)
+        idCircle = [0]*circleLength
         nodeIDs = random_combinations(range(2 * nn), nn) # returns random list of indices for the nn nodes
         for i in range(nn):
             currentNode = chord.CNode(nodeIDs[i], args.capacity, args.fill_factor,
-                                      args.retrieval_factor, sc, rs) # create chord instance with unique id
+                                      args.retrieval_factor, sc, rs, m) # create chord instance with unique id
             idCircle[nodeIDs[i]] = currentNode
         
-        # iterate through idCircle and set successors of every node
+        # iterate through idCircle and set successors of every node (along with predecessor)
+        # iteration starts from index 0
         currNode = 0
+        startingNode = 0
         for i in range(len(idCircle)):
             if idCircle[i] != 0 and currNode == 0:
+                startingNode = idCircle[i]
                 currNode = idCircle[i]
             elif idCircle[i] != 0 and currNode != 0:
-                # currNode.ftable.get(endpoints[i])
-                # update fingertable dictionary's 3rd entry in list to successor (i.e. idCircle[i])
-                pass
+                currNode.successor = idCircle[i]
+                idCircle[i].predecessor = currNode
+                currNode = idCircle[i]
+        # setting last node's successor/predecessor in the circle
+        currNode.successor = startingNode
+        startingNode.predecessor = currNode
 
+        # CHORD TODO: set finger[k].node for every node's finger table
 
-        
-            
+        # currNode.ftable.get(endpoints[i]) -> can't directly access endpoints[i]
+        # update fingertable dictionary's 3rd entry in list to successor (i.e. idCircle[i])
+
+        # CHORD TODO: set fill factor, retrieval factor, etc. (features for chord class)
+        # CHORD TODO: spilling to another node
+        # -> How to select which node to spill? (Need to conceptually understand how chord exactly works)
+
+        # CHORD maybe TODO:
+        # find_successor, find_predecessor, closest_preceding_finger (i.e. node n receives query to find a random id's succ/predecessor)
+
+        # TODO: stat collector
+        # -> How does timing work for retrievals and everything?
 
 
     elif args.protocol == "pot":
@@ -89,6 +107,18 @@ def random_combinations(id_length, num_nodes):
     n = len(id_length)
     random_indices = random.sample(range(n), num_nodes)
     return list(idCircle[i] for i in random_indices)
+
+# CHORD: helper function to find smallest power of 2 that is greater than 2 * nn
+# po2 = size of id circle
+# m = # of bits to represent size of circle -> i.e. log(po2)
+def idCircleLength(num_nodes):
+    circleLength = 2*num_nodes
+    po2 = 1
+    m = 0
+    while po2 < circleLength:
+        po2 = po2 * 2
+        m += 1
+    return po2, m
 
 if __name__ == "__main__":
     run()
