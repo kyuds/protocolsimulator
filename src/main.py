@@ -49,22 +49,41 @@ def run():
         # iteration starts from index 0
         currNode = 0
         startingNode = 0
+        nodesList = []
         for i in range(len(idCircle)):
             if idCircle[i] != 0 and currNode == 0:
                 startingNode = idCircle[i]
                 currNode = idCircle[i]
+                nodesList.append(idCircle[i])
             elif idCircle[i] != 0 and currNode != 0:
                 currNode.successor = idCircle[i]
                 idCircle[i].predecessor = currNode
                 currNode = idCircle[i]
+                nodesList.append(idCircle[i])
+
         # setting last node's successor/predecessor in the circle
         currNode.successor = startingNode
         startingNode.predecessor = currNode
 
         # CHORD TODO: set finger[k].node for every node's finger table
+        # I think there should be a more efficient way of doing it but for now I leave it as is
+        nodeIdList = [i.id for i in nodesList]
+        for node in nodesList:
+            # possible minor improvement: set node.ftable[0][2] = node.successor (for slight improvement in performance)
+            for interval in node.ftable:
+                i = interval[0]
+                start = interval[0] - 1
+                while (i % circleLength != start):
+                    # probably can optimize further by checking if nextNode's id is within other intervals as well
+                    if i in nodeIdList:
+                        nextNode = nodesList[nodeIdList.index(i)]
+                        interval.append(nextNode)
+                        break
+                    i += 1
+                # not taking into account edge case where there's only 1 node in the entire system
+        
+        # At this point, ftable is of the form [starting index, ending index, closest node after the starting index]
 
-        # currNode.ftable.get(endpoints[i]) -> can't directly access endpoints[i]
-        # update fingertable dictionary's 3rd entry in list to successor (i.e. idCircle[i])
 
         # CHORD TODO: set fill factor, retrieval factor, etc. (features for chord class)
         # CHORD TODO: spilling to another node

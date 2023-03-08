@@ -26,10 +26,10 @@ class CNode:
         self.successor = 0
         self.predecessor = 0
 
-    def successor(self):
+    def get_successor(self):
         return self.successor
     
-    def predecessor(self):
+    def get_predecessor(self):
         return self.predecessor
 
 def cnodeFactory(id, args, statCollector, rs):
