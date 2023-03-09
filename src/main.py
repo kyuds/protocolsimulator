@@ -82,7 +82,7 @@ def run():
                     i += 1
                 # not taking into account edge case where there's only 1 node in the entire system
         
-        # At this point, ftable is of the form [starting index, ending index, closest node after the starting index]
+        # At this point, ftable is of the form [starting index, ending index, closest node object after the starting index]
 
 
         # CHORD TODO: set fill factor, retrieval factor, etc. (features for chord class)
@@ -91,6 +91,8 @@ def run():
 
         # CHORD maybe TODO:
         # find_successor, find_predecessor, closest_preceding_finger (i.e. node n receives query to find a random id's succ/predecessor)
+        # implementing this in case it's useful
+
 
         # TODO: stat collector
         # -> How does timing work for retrievals and everything?
@@ -138,6 +140,36 @@ def idCircleLength(num_nodes):
         po2 = po2 * 2
         m += 1
     return po2, m
+
+# CHORD: helper function to query a node for the closest finger preceding id
+# node = node that receives query
+# id = id that the query is requesting the closest preceding finger of
+# m = number of bits to represent identifier circle
+def closest_preceding_finger(node, id, m):
+    int = [i for i in range(node + 1, id)] # check possible off by one error in id
+    for i in range(m, -1, -1):
+        if node.ftable[i][2].id in int:
+            return node.ftable[i][2]
+    return node
+
+# CHORD: helper function to query a node for predecessor of id
+# node = node that receives query
+# id = id that the query is requesting the predecessor of
+# m = number of bits to represent identifier circle (required to call closest_preceding_finger)
+def find_predecessor(node, id, m):
+    pointer = node
+    int = [i for i in range(node.id, node.successor.id)]
+    while id not in int:
+        pointer = closest_preceding_finger(pointer, id, m)
+    return pointer
+
+# CHORD: helper function to query for successor of id
+# node = node that receieves query
+# id = id that the query is requesting the successor of
+# m = number of bits to represent identifier circle (required to call find_predecessor)
+def find_successor(node, id, m):
+    previous = find_predecessor(node, id, m)
+    return previous.successor
 
 if __name__ == "__main__":
     run()
