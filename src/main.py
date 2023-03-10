@@ -173,7 +173,6 @@ def find_successor(node, id, m):
 # CHORD: helper function for attempting to spill to target node
 def tryToSpill(targetnode, time):
     # check if there is enough memory in targetnode to spill
-    targetnode.
     pass
 
 # CHORD: helper function for re-allocating memory for all nodes -> same as oscillate()?

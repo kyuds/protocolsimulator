@@ -2,7 +2,7 @@
 
 class CNode:
     def __init__(self, id, capacity, fillFactor, 
-                 retrievalFactor, statCollector, rs, m):
+                 restoreFactor, statCollector, rs, m):
         # settings
         id_length = m # m = identifier length -> must be large enough to make probability of two node/keys having same id negligible
         self.id = id
