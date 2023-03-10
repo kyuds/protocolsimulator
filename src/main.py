@@ -121,7 +121,7 @@ def run():
             nd.run()
         if epc != 0 and epc % op == 0:
             for nd in allNodes:
-                nd.oscillate()
+                nd.memOscillate()
     
     # log statistics 
     sc.logStats()

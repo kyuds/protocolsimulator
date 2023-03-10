@@ -23,6 +23,7 @@ class StatCollector:
 
     def logStats(self):
         print("Results:")
+        print(self.data)
     
     def addNewEntry(self):
         self.data.append({
