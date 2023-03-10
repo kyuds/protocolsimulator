@@ -2,6 +2,7 @@
 import argparse
 import numpy as np # prob wont need this later.
 import random
+from numpy.random import randint
 
 # class imports
 import chord
@@ -85,16 +86,17 @@ def run():
                 # not taking into account edge case where there's only 1 node in the entire system
         
         # Spill attempt
-        ts = 1 # ts = timestep
-        while True:
-            for node in nodesList: # TODO: replace nodesList with [(node receiving query), (node's first row successor), ... , (node's last row successor)]
-                if t % 10 == 0:
-                    memoryRandomize(nodesList) # TODO: memoryRandomize is the same as oscillate()?
-                res, t = tryToSpill(node, ts)
-                if res:
-                    break
-            print(f"spilling locally")
-            return
+        # TODO: Check queryHandle()
+        # ts = 1 # ts = timestep
+        # while True:
+        #     for node in nodesList: # TODO: replace nodesList with [(node receiving query), (node's first row successor), ... , (node's last row successor)]
+        #         if t % 10 == 0:
+        #             memoryRandomize(nodesList) # TODO: memoryRandomize is the same as oscillate()?
+        #         res, t = tryToSpill(node, ts)
+        #         if res:
+        #             break
+        #     print(f"spilling locally")
+        #     return
 
 
         # CHORD TODO: set fill factor, retrieval factor, etc. (features for chord class)
@@ -171,17 +173,41 @@ def find_successor(node, id, m):
     previous = find_predecessor(node, id, m)
     return previous.successor
 
+# CHORD: helper function to attempt object spilling to target node
+# TODO: how to incorporate timestep into this?
+# TODO: object is just counted as 1 for now. (can change)
+def queryHandle(node, object=None): # ts?
+    queryNodeList = list(set([node] + [i[2] for i in node.ftable]))
+    ts = 0 # fix -> needs to be global
+    while True:
+        for node in queryNodeList:
+            if ts % 10 == 0:
+                memoryRandomize(queryNodeList)
+            res, ts = tryToSpill(node, ts)
+            if res:
+                return
+        print(f"spilling locally")
+        node.numLocalObjects += 1 # assume one object is being spilled here
+        return
+
+
 # CHORD: helper function for attempting to spill to target node
 def tryToSpill(targetnode, time):
-    # check if there is enough memory in targetnode to spill
-    pass
+    time += 1
+    usage = (targetnode.numLocalObjects + targetnode.numFromRemote) / targetnode.capacity
+    if usage >= targetnode.fillFactor:
+        print(f"targetnode exceeded fillfactor, spill failed")
+        return False, time
+    targetnode.numFromRemote += 1 # assume one object is being spilled here
+    print(f"spill to {targetnode} successful!")
+    return True, time
 
 # CHORD: helper function for re-allocating memory for all nodes -> same as oscillate()?
 def memoryRandomize(nodelist):
-    # randomize memory capacity for all nodes
     for node in nodelist:
-        # do we have a variable to indicate how filled a node is?
-        pass
+        # randomly change numLocalObjects and numFromRemote -> prevention of 
+        node.numLocalObjects = randint(0, node.capacity / 2)
+        node.numFromRemote = randint(0, node.capacity / 2)
 
 if __name__ == "__main__":
     run()
