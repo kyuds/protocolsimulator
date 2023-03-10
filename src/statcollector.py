@@ -1,5 +1,10 @@
 # Class for Collecting Various Statistics
 
+"""
+Data to collect:
+- Node State: Percentage Full
+"""
+
 class StatCollector:
     def __init__(self, latency):
         self.latency = latency
@@ -18,3 +23,16 @@ class StatCollector:
 
     def logStats(self):
         print("Results:")
+    
+    def addNewEntry(self):
+        self.data.append({
+            "nodeStates": [],
+            "spillRestore": [],
+            # add more fields here. 
+        })
+    
+    def addNodeState(self, id, fp):
+        self.data[-1]["nodeStates"].append((id, fp))
+    
+    def addRestoreData(self, id, n):
+        self.data[-1]["spillRestore"].append((id, n))

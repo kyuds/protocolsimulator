@@ -15,7 +15,7 @@ def run():
     parser.add_argument("--latency", default=10, type=int, help="Network latency (in ms)")
     parser.add_argument("--capacity", default=100, type=int, help="Object capacity")
     parser.add_argument("--fill-factor", default=0.7, type=float, help="Factor of memory fill achieved before eviction")
-    parser.add_argument("--retrieval-factor", default=0.2, type=float, help="Probability of object restore")
+    parser.add_argument("--restore-period", default=0.2, type=float, help="Probability of object restore")
     parser.add_argument("--oscillate-period", default=10, type=float, help="Memory state change period")
     parser.add_argument("--total-epochs", default=1000, type=float, help="Total number of epochs to simulate")
     args = parser.parse_args()
@@ -43,6 +43,7 @@ def run():
 
     # run simulation
     for epc in range(args.total_epochs):
+        sc.addNewEntry()
         for nd in allNodes:
             nd.run()
         if epc != 0 and epc % op == 0:

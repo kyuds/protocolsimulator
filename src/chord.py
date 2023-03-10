@@ -2,12 +2,12 @@
 
 class CNode:
     def __init__(self, id, capacity, fillFactor, 
-                 retrievalFactor, statCollector, rs):
+                 restoreFactor, statCollector, rs):
         # settings
         self.id = id
         self.capacity = capacity
         self.fillFactor = fillFactor
-        self.retrievalFactor = retrievalFactor
+        self.restoreFactor = restoreFactor
         self.statCollector = statCollector
 
         # random variables
