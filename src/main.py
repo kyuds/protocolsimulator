@@ -67,32 +67,36 @@ def run():
 
         # CHORD TODO: set finger[k].node for every node's finger table
         # I think there should be a more efficient way of doing it but for now I leave it as is
-        nodeIdList = [i.id for i in nodesList]
-        for node in nodesList:
-            # possible minor improvement: set node.ftable[0][2] = node.successor (for slight improvement in performance)
-            for interval in node.ftable:
-                i = interval[0]
-                start = interval[0] - 1
-                while (i % circleLength != start):
-                    # probably can optimize further by checking if nextNode's id is within other intervals as well
-                    if i in nodeIdList:
-                        nextNode = nodesList[nodeIdList.index(i)]
-                        interval.append(nextNode)
-                        break
-                    i += 1
+        # 
+        # nodeIdList = [i.id for i in nodesList]
+        # for node in nodesList:
+        #     # possible minor improvement: set node.ftable[0][2] = node.successor (for slight improvement in performance)
+        #     for interval in node.ftable:
+        #         i = interval[0]
+        #         start = interval[0] - 1
+        #         while (i % circleLength != start):
+        #             # probably can optimize further by checking if nextNode's id is within other intervals as well
+        #             if i in nodeIdList:
+        #                 nextNode = nodesList[nodeIdList.index(i)]
+        #                 interval.append(nextNode)
+        #                 break
+        #             i += 1
                 # not taking into account edge case where there's only 1 node in the entire system
         
-        # At this point, ftable is of the form [starting index, ending index, closest node object after the starting index]
+        # Spill attempt
+        ts = 1 # ts = timestep
+        while True:
+            for node in nodesList: # TODO: replace nodesList with [(node receiving query), (node's first row successor), ... , (node's last row successor)]
+                if t % 10 == 0:
+                    memoryRandomize(nodesList) # TODO: memoryRandomize is the same as oscillate()?
+                res, t = tryToSpill(node, ts)
+                if res:
+                    break
+            print(f"spilling locally")
+            return
 
 
         # CHORD TODO: set fill factor, retrieval factor, etc. (features for chord class)
-        # CHORD TODO: spilling to another node
-        # -> How to select which node to spill? (Need to conceptually understand how chord exactly works)
-
-        # CHORD maybe TODO:
-        # find_successor, find_predecessor, closest_preceding_finger (i.e. node n receives query to find a random id's succ/predecessor)
-        # implementing this in case it's useful
-
 
         # TODO: stat collector
         # -> How does timing work for retrievals and everything?
@@ -153,9 +157,6 @@ def closest_preceding_finger(node, id, m):
     return node
 
 # CHORD: helper function to query a node for predecessor of id
-# node = node that receives query
-# id = id that the query is requesting the predecessor of
-# m = number of bits to represent identifier circle (required to call closest_preceding_finger)
 def find_predecessor(node, id, m):
     pointer = node
     int = [i for i in range(node.id, node.successor.id)]
@@ -164,12 +165,22 @@ def find_predecessor(node, id, m):
     return pointer
 
 # CHORD: helper function to query for successor of id
-# node = node that receieves query
-# id = id that the query is requesting the successor of
-# m = number of bits to represent identifier circle (required to call find_predecessor)
 def find_successor(node, id, m):
     previous = find_predecessor(node, id, m)
     return previous.successor
+
+# CHORD: helper function for attempting to spill to target node
+def tryToSpill(targetnode, time):
+    # check if there is enough memory in targetnode to spill
+    targetnode.
+    pass
+
+# CHORD: helper function for re-allocating memory for all nodes -> same as oscillate()?
+def memoryRandomize(nodelist):
+    # randomize memory capacity for all nodes
+    for node in nodelist:
+        # do we have a variable to indicate how filled a node is?
+        pass
 
 if __name__ == "__main__":
     run()
