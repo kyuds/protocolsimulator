@@ -1,14 +1,14 @@
 # Power Of Two (POT) Simulator
-from statcollector import StatCollector
-import numpy as np
 import argparse
+
+from statcollector import StatCollector
+from utils import Rnd
 
 # PNode Class
 class PNode:
     def __init__(self, id: int, capacity: int, fillFactor: float, 
                  restorePeriod: int, statCollector: StatCollector, 
-                 rnd: np.random._generator.Generator, 
-                 rs: np.random._generator.Generator):
+                 prnd: Rnd, mrnd: Rnd):
         # settings
         self.id = id
         self.capacity = capacity
@@ -21,8 +21,8 @@ class PNode:
         # rs  : Node memory randomness
         #       used for both oscillation
         #       and spilled obj restore
-        self.rnd = rnd
-        self.rs = rs
+        self.prnd = prnd
+        self.mrnd = mrnd
 
         # node object state
         self.numLocallyOwned = 0
@@ -37,13 +37,6 @@ class PNode:
     # nd can both be a list of nodes or just a single one. 
     def addNodeInfo(self, nd: list):
         self.priorityNodes.extend(nd)
-    
-    # samples two random numbers from 0 ~ bnd (exclusive)
-    def twoRandomSample(self, bnd: int):
-        f = s = rndOne(self.rnd, 0, bnd)
-        while f == s:
-            s = rndOne(self.rnd, 0, bnd)
-        return f, s
 
     def findNodeToSpill(self):
         pass
@@ -75,11 +68,6 @@ class PNode:
 # helper function to create PNodes
 def pnodeFactory(id: int, args: argparse.Namespace, 
                  statCollector:StatCollector, 
-                 rnd: np.random._generator.Generator, 
-                 rs: np.random._generator.Generator):
+                 prnd: Rnd, mrnd: Rnd):
     return PNode(id, args.capacity, args.fill_factor, 
-                 args.restore_period, statCollector, rnd, rs)
-
-# other helper functions
-def rndOne(rnd, low: int, high: int):
-    return rnd.integers(low=low, high=high, size=1)[0]
+                 args.restore_period, statCollector, prnd, mrnd)

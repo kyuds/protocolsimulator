@@ -1,6 +1,6 @@
 # library imports
 import argparse
-import numpy as np
+import numpy as np # prob wont need this later.
 import random
 
 # class imports
@@ -11,6 +11,7 @@ import pot
 from statcollector import StatCollector
 from pot import pnodeFactory
 from chord import cnodeFactory
+from utils import Rnd
 
 def run():
     # parse arguments
@@ -27,7 +28,7 @@ def run():
 
     # settings
     op = args.oscillate_period
-    rs = np.random.default_rng(1000)
+    mrnd = Rnd(1000)
     nn = args.num_nodes
 
     # setup for protocol type
@@ -104,9 +105,9 @@ def run():
 
     elif args.protocol == "pot":
         # initialize a single random generator for POT decision making.
-        rnd = np.random.default_rng(12345)
+        prnd = Rnd(12345)
         sc = StatCollector(args.latency)
-        allNodes = [pnodeFactory(i, args, sc, rnd, rs) for i in range(nn)]
+        allNodes = [pnodeFactory(i, args, sc, prnd, mrnd) for i in range(nn)]
         for idx, nd in enumerate(allNodes):
             nd.addNodeInfo([n for i, n in enumerate(allNodes) if i != idx])
     else:
