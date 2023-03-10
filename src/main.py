@@ -33,14 +33,17 @@ def run():
 
     # setup for protocol type
     if args.protocol == "chord":
+        # TODO: fix
+        rs = 0
+
         sc = StatCollector(args.latency)
         allNodes = [cnodeFactory(i, args, sc, rs) for i in range(nn)]
         # add other node info that is necessary... idk how to initialize
 
         # for now assume identifier circle has length (smallest power of 2 greater than 2nn)
-        circleLength, m = idCircleLength(nn)
+        circleLength, m = chord.idCircleLength(nn)
         idCircle = [0]*circleLength
-        nodeIDs = random_combinations(range(2 * nn), nn) # returns random list of indices for the nn nodes
+        nodeIDs = chord.random_combinations(range(2 * nn), nn) # returns random list of indices for the nn nodes
         for i in range(nn):
             currentNode = chord.CNode(nodeIDs[i], args.capacity, args.fill_factor,
                                       args.retrieval_factor, sc, rs, m) # create chord instance with unique id
@@ -85,7 +88,7 @@ def run():
                 # not taking into account edge case where there's only 1 node in the entire system
         
         # Spill attempt
-        # TODO: Check queryHandle()
+        # TODO: Check chord.queryHandle()
         # ts = 1 # ts = timestep
         # while True:
         #     for node in nodesList: # TODO: replace nodesList with [(node receiving query), (node's first row successor), ... , (node's last row successor)]
