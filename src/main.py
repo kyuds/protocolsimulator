@@ -13,7 +13,7 @@ from pot import pnodeFactory
 from chord import cnodeFactory
 from utils import Rnd
 
-def run():
+def simulate():
     # parse arguments
     parser = argparse.ArgumentParser(description="Settings for Protocol Simulator")
     parser.add_argument("--num-nodes", default=10, type=int, help="Number of nodes")
@@ -131,4 +131,4 @@ def run():
     sc.logStats()
 
 if __name__ == "__main__":
-    run()
+    simulate()
