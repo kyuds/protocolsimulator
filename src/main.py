@@ -13,7 +13,10 @@ from pot import pnodeFactory
 from chord import cnodeFactory
 from utils import Rnd
 
-def simulate():
+# seed
+np.random.seed(3)
+
+def run():
     # parse arguments
     parser = argparse.ArgumentParser(description="Settings for Protocol Simulator")
     parser.add_argument("--num-nodes", default=10, type=int, help="Number of nodes")
@@ -87,6 +90,12 @@ def simulate():
         #             i += 1
                 # not taking into account edge case where there's only 1 node in the entire system
         
+        for time in range(1000):
+            if time % 10 == 0:
+                chord.memoryRandomize(nodesList)
+            for node in nodesList:
+                node.next(time)
+
         # Spill attempt
         # TODO: Check chord.queryHandle()
         # ts = 1 # ts = timestep
@@ -99,13 +108,6 @@ def simulate():
         #             break
         #     print(f"spilling locally")
         #     return
-
-
-        # CHORD TODO: set fill factor, retrieval factor, etc. (features for chord class)
-
-        # TODO: stat collector
-        # -> How does timing work for retrievals and everything?
-
 
     elif args.protocol == "pot":
         # initialize a single random generator for POT decision making.
@@ -125,10 +127,10 @@ def simulate():
             nd.run()
         if epc != 0 and epc % op == 0:
             for nd in allNodes:
-                nd.memOscillate()
+                nd.oscillate()
     
     # log statistics 
     sc.logStats()
 
 if __name__ == "__main__":
-    simulate()
+    run()

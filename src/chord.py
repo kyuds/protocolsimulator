@@ -17,6 +17,11 @@ class CNode:
         self.numLocalObjects = 0
         self.numFromRemote = 0
 
+        # spill time takes 5 ts
+        # next method that runs the next timestep (call this 1000 times or something to simulate 1000 ts)
+        # for now just make spilling happen
+        # every object is considered to be independent (size 1) e.g. if spilling 30 objects then spill them simultaneously
+
         # random variables
         self.rs = rs
 
@@ -37,6 +42,20 @@ class CNode:
     
     def get_predecessor(self):
         return self.predecessor
+    
+    def next(self, ts):
+        numObjectstoSpill = self.numLocalObjects + self.numFromRemote - self.capacity * self.fillFactor
+        currentIndex = ts % 10 # must have
+        if numObjectstoSpill <= 0 or currentIndex > len(self.ftable) + 1: # don't need to spill
+            print(f"spilling unnecessary")
+            return True
+        elif currentIndex == len(self.ftable): # spill to local?
+            print(f"spilling to local")
+            self.numLocalObjects += numObjectstoSpill
+            self.numFromRemote -= numObjectstoSpill
+        else: # attempt to spill
+            remaining = trySpilling(self.ftable[currentIndex][2], numObjectstoSpill)
+            self.numFromRemote -= remaining
 
 # CHORD: helper function for randomly picking ids for identifier circle
 # id_length = [0, length of identifier circle]
@@ -100,6 +119,19 @@ def queryHandle(node, object=None): # ts?
         node.numLocalObjects += 1 # assume one object is being spilled here
         return
 
+# CHORD: helper function that returns the number of objects that are left to spill
+def trySpilling(targetnode, numObjectsToSpill):
+    usage = (targetnode.numLocalObjects + targetnode.numFromRemote) / targetnode.capacity
+    if usage >= targetnode.fillFactor:
+        print(f"targetnode exceeded fillfactor, spill failed")
+        return numObjectsToSpill
+    else:
+        storage = targetnode.capacity * targetnode.fillFactor - targetnode.numLocalObjects - targetnode.numFromRemote
+        toSpill = min(storage, numObjectsToSpill)
+        targetnode.numFromRemote += toSpill
+        print(f"spill successful. {toSpill} objects have been spilled")
+        return numObjectsToSpill - toSpill
+
 
 # CHORD: helper function for attempting to spill to target node
 def tryToSpill(targetnode, time):
@@ -119,10 +151,11 @@ def memoryRandomize(nodelist):
         node.numLocalObjects = randint(0, node.capacity / 2)
         node.numFromRemote = randint(0, node.capacity / 2)
 
-
-
-def cnodeFactory(id, args, statCollector, rs):
-    return None
+# Helper function to create CNodes
+def cnodeFactory(id, capacity, fillFactor, restoreFactor,
+                 statCollector, rs, m):
+    return CNode(id, capacity, fillFactor, restoreFactor,
+                 statCollector, rs, m)
 
 
 # For now don't think about hashing id. Work on base chord protocol
