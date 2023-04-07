@@ -1,11 +1,7 @@
 from utils import Rnd
-from statcollector import StatCollector
-import random
-import numpy as np
 
 class CNode:
-    def __init__(self, id: int, capacity: int, threshold: float, 
-                 statcollector: StatCollector, rnd: Rnd):
+    def __init__(self, id: int, capacity: int, threshold: float, rnd: Rnd):
         # node properties
         self.capacity = capacity
         self.minCapacity = int(0.1 * self.capacity)
@@ -18,8 +14,11 @@ class CNode:
         self.ftable = []
 
         # node utils
-        self.sc = statcollector
         self.rnd = rnd
+
+        # query stats
+        self.spilledToDisk = False
+        self.numQueries = 0
     
     def shuffle(self):
         self.numObjects += self.rnd.get(-1 * self.osc, self.osc + 1)
@@ -29,6 +28,10 @@ class CNode:
     
     def needToSpill(self):
         return self.numObjects > int(self.capacity * self.threshold)
+    
+    def resetStats(self):
+        self.spilledToDisk = False
+        self.numQueries = 0
 
     def __repr__(self):
         return "C" + str(self.id)

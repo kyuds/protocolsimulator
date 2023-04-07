@@ -16,7 +16,7 @@ def simulate(args):
     # setup nodes based on simulation type
     if args.protocol == "chord": 
         for id in range(args.num_nodes):
-            nodes.append(CNode(id, args.capacity, args.threshold, sc, rnd))
+            nodes.append(CNode(id, args.capacity, args.threshold, rnd))
         
         # create ID circle
         IDCircle = chord.idCircle(nodes)
@@ -28,7 +28,7 @@ def simulate(args):
     elif args.protocol == "pot":
         prnd = Rnd(2)
         for id in range(args.num_nodes):
-            pnode = PNode(id, args.capacity, args.threshold, sc, rnd, prnd)
+            pnode = PNode(id, args.capacity, args.threshold, rnd, prnd)
             nodes.append(pnode)
         
         for id in range(args.num_nodes):
@@ -46,13 +46,18 @@ def simulate(args):
     
     # for ep in range(args.total_epochs):
     #     unbalanced = True
-
     #     while unbalanced:
     #         unbalanced = False
     #         for n in nodes:
     #             if n.needToSpill():
     #                 unbalanced = True
     #                 n.run()
+        
+    #     sc.addEntry(ep)
+    #     for n in nodes:
+    #         sc.addQueryTime(n)
+    #         sc.nodeSpilledToDisk(n)
+    #         n.resetStats()
         
     #     for n in nodes:
     #         n.shuffle()
