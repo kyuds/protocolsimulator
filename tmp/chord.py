@@ -37,20 +37,13 @@ class CNode:
 # TODO: SHA-1 encoding
 def idCircle(nodes):
     n = len(nodes)
-    # print(f"n is {n}")
     size, m = idCircleLength(n)
-    # print(f"size is {size}, m is {m}")
     circle = [-1] * size
-    # print(f"circle is {circle}")
-    # print(f"size of circle is {len(circle)}")
     nodeIDs = random_combinations(range(size), n)
-    # print(f"random combs is {nodeIDs}")
     i = 0
     for node in nodes:
         circle[nodeIDs[i]] = node
-        # print(f"node id is {node.id} and node name is {node} and is going into index {nodeIDs[i]}")
         i += 1
-    print(circle)
     return circle
 
 # CHORD: temporary helper function to find smallest power of 2 that is greater than 2 * nn

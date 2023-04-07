@@ -17,12 +17,8 @@ def simulate(args):
         for id in range(args.num_nodes):
             nodes.append(CNode(id, args.capacity, args.threshold, sc, rnd))
         # create ID circle
-        
-        # test
-        # for node in nodes:
-        #     print(node.id)
-
         IDCircle = chord.idCircle(nodes)
+        # print(f"IDCircle is {IDCircle}")
 
     elif args.protocol == "pot":
         for id in range(args.num_nodes):
