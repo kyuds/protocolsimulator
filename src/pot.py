@@ -1,114 +1,39 @@
-# Power Of Two (POT) Simulator
-import argparse
-
-from statcollector import StatCollector
 from utils import Rnd
+from statcollector import StatCollector
 
-"""
-Some Assumptions:
-- Each object is of the same size.
-- There can only be integer number of objects. 
-- Restoration happens at a random distribution.
-
-Node Settings:
-- Capacity: denotes the total number of objects
-            physical RAM of the node can store.
-- FillFactor: denotes the percentage of RAM that
-              needs to be available for the node 
-              to accept incoming remote objects.
-- RestorePeriod: probabilistical period on which
-                 node tries to restore spilled
-                 objects. This is in place of
-                 actual algorithms.
-
-Random Variables:
-- mrnd (Memory Random): the random variable used for
-                        memory oscillation, restoration
-                        of spilled objects, etc.
-- prnd (POT Random): the random variable to be used by
-                     the POT algorithm exclusively to
-                     find nodes to spill to. 
-"""
-
-# PNode Class
 class PNode:
-    def __init__(self, id: int, capacity: int, fillFactor: float, 
-                 restorePeriod: int, statCollector: StatCollector, 
-                 prnd: Rnd, mrnd: Rnd):
-        # settings
-        self.id = id
+    def __init__(self, id: int, capacity: int, threshold: float, 
+                 statcollector: StatCollector, rnd: Rnd, prnd: Rnd):
+        # node properties
         self.capacity = capacity
-        self.fillFactor = fillFactor
-        self.restorePeriod = restorePeriod
-        self.statCollector = statCollector
+        self.minCapacity = int(0.1 * self.capacity)
+        self.osc = int(0.2 * self.capacity)
+        self.threshold = threshold # spill if threshold is exceeded
 
-        # random variables
-        self.prnd = prnd
-        self.mrnd = mrnd
+        # node state
+        self.id = id
+        self.numObjects = self.minCapacity
+        self.otherNodes = []
 
-        # node object state
-        self.numLocallyOwned = self.mrnd.one(0, self.capacity * 0.9)
-        self.numFromRemote = 0
-        self.numRemotelySpilled = 0
-
-        # node communication state
-        self.remoteObjLoc = {}
-        self.priorityNodes = []
-        self.spilledToNodes = []
-
-    # nd can both be a list of nodes or just a single one. 
-    def addNodeInfo(self, nd: list):
-        self.priorityNodes.extend(nd)
-
-    def findNodeToSpill(self):
-        # to figure out: whether to spill each node one by one
-        # or whether to do batch spilling on the node. 
-        pass
-
-        """
-        Steps:
-        - declare backup list for nodes. 
-        - Until node is found OR self.priorityNodes is empty:
-        - choose two nodes at random. Pop them from list.
-        - compare and evaluate if node has space.
-        - if so:
-            - add to that node's numLocalObjects
-            - add node to spilledToNodes
-        - else:
-            - Move onto finding from spilledToNodes. 
-        """
+        # node utils
+        self.sc = statcollector
+        self.rnd = rnd
+        self.prnd = prnd # different from rnd in that used by POT.
     
-    def memOscillate(self):
-        pass
+    def shuffle(self):
+        self.numObjects += self.rnd.get(-1 * self.osc, self.osc + 1)
+        
+        if self.numObjects < self.minCapacity:
+            self.numObjects = self.minCapacity
 
-        """
-        Steps:
-        - Choose an appropriate memory oscillation factor
-        - Get a random number from `mrnd`
-        - Add to node's self.numLocalObjects
-        """
+    def needToSpill(self):
+        return self.numObjects > int(self.capacity * self.threshold)
+    
+    def addNodes(self, nodes):
+        self.otherNodes.extend(nodes)
 
+    def __repr__(self):
+        return "P" + str(self.id)
+    
     def run(self):
         pass
-        
-        """
-        Steps:
-        - restore all relevant objects
-        - calculate objects to evict
-        - choose nodes to spill to using findNodeToSpill
-        - send those nodes relevant remote objects
-        """
-    
-    ## Helper Functions ##
-
-    def filled(self):
-        totalObjectCount = self.numLocallyOwned + self.numFromRemote
-        return 1.0 * totalObjectCount / self.capacity
-        
-
-# helper function to create PNodes
-def pnodeFactory(id: int, args: argparse.Namespace, 
-                 statCollector:StatCollector, 
-                 prnd: Rnd, mrnd: Rnd):
-    return PNode(id, args.capacity, args.fill_factor, 
-                 args.restore_period, statCollector, prnd, mrnd)
