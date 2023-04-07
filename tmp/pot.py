@@ -23,6 +23,9 @@ class PNode:
         
         if self.numObjects < self.minCapacity:
             self.numObjects = self.minCapacity
+
+    def needToSpill(self):
+        return self.numObjects > int(self.capacity * self.threshold)
     
     def run(self):
         pass

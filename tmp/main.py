@@ -23,12 +23,23 @@ def simulate(args):
         print("Simulation name not supported.")
         return
 
-    for ep in range(args.total_epochs):
+    for _ in range(100):
         for n in nodes:
-            n.run()
-        if ep != 0 and ep % args.oscillate_period == 0:
+            n.shuffle()
+            print(n.numObjects)
+    
+    for ep in range(args.total_epochs):
+        unbalanced = True
+
+        while unbalanced:
+            unbalanced = False
             for n in nodes:
-                n.shuffle()
+                if n.needToSpill():
+                    unbalanced = True
+                    n.run()
+        
+        for n in nodes:
+            n.shuffle()
 
 if __name__=="__main__":
     # parse arguments
