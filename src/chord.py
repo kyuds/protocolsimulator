@@ -1,4 +1,6 @@
 from utils import Rnd
+import numpy as np
+import random
 
 class CNode:
     def __init__(self, id: int, capacity: int, threshold: float, rnd: Rnd):
