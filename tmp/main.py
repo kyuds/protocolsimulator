@@ -5,6 +5,10 @@ from pot import PNode
 from chord import CNode
 from utils import Rnd
 
+# Class imports
+import chord
+import pot
+
 def simulate(args):
     nodes, rnd, sc = [], Rnd(0), None
 
@@ -13,6 +17,12 @@ def simulate(args):
         for id in range(args.num_nodes):
             nodes.append(CNode(id, args.capacity, args.threshold, sc, rnd))
         # create ID circle
+        
+        # test
+        # for node in nodes:
+        #     print(node.id)
+
+        IDCircle = chord.idCircle(nodes)
 
     elif args.protocol == "pot":
         for id in range(args.num_nodes):
@@ -23,23 +33,23 @@ def simulate(args):
         print("Simulation name not supported.")
         return
 
-    for _ in range(100):
-        for n in nodes:
-            n.shuffle()
-            print(n.numObjects)
+    # for _ in range(100):
+    #     for n in nodes:
+    #         n.shuffle()
+    #         print(n.numObjects)
     
-    for ep in range(args.total_epochs):
-        unbalanced = True
+    # for ep in range(args.total_epochs):
+    #     unbalanced = True
 
-        while unbalanced:
-            unbalanced = False
-            for n in nodes:
-                if n.needToSpill():
-                    unbalanced = True
-                    n.run()
+    #     while unbalanced:
+    #         unbalanced = False
+    #         for n in nodes:
+    #             if n.needToSpill():
+    #                 unbalanced = True
+    #                 n.run()
         
-        for n in nodes:
-            n.shuffle()
+    #     for n in nodes:
+    #         n.shuffle()
 
 if __name__=="__main__":
     # parse arguments
