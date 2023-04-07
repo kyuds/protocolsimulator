@@ -1,6 +1,7 @@
 from utils import Rnd
 from statcollector import StatCollector
 import random
+import numpy as np
 
 class CNode:
     def __init__(self, id: int, capacity: int, threshold: float, 
@@ -16,6 +17,8 @@ class CNode:
         self.numObjects = self.minCapacity
 
         # add all nodes to fingertable
+        self.ftable = []
+
 
         # node utils
         self.sc = statcollector
@@ -29,6 +32,21 @@ class CNode:
     
     def needToSpill(self):
         return self.numObjects > int(self.capacity * self.threshold)
+
+    def __repr__(self):
+        return "C" + str(self.id)
+    
+    def setFingerTable(self, idCircle):
+        n = len(idCircle)
+        m = int(np.log2(n))
+        for k in range(m):
+            start = (idCircle.index(self) + 2**k) % n
+            for i in range(n):
+                if idCircle[(start + i) % n] != -1:
+                    successor = idCircle[(start + i) % n]
+                    break
+            self.ftable.append([start, successor])
+        print(self.ftable)
     
     def run(self):
         pass

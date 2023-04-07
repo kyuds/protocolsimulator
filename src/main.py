@@ -75,19 +75,19 @@ def run():
         # CHORD TODO: set finger[k].node for every node's finger table
         # I think there should be a more efficient way of doing it but for now I leave it as is
         # 
-        # nodeIdList = [i.id for i in nodesList]
-        # for node in nodesList:
-        #     # possible minor improvement: set node.ftable[0][2] = node.successor (for slight improvement in performance)
-        #     for interval in node.ftable:
-        #         i = interval[0]
-        #         start = interval[0] - 1
-        #         while (i % circleLength != start):
-        #             # probably can optimize further by checking if nextNode's id is within other intervals as well
-        #             if i in nodeIdList:
-        #                 nextNode = nodesList[nodeIdList.index(i)]
-        #                 interval.append(nextNode)
-        #                 break
-        #             i += 1
+        nodeIdList = [i.id for i in nodesList]
+        for node in nodesList:
+            # possible minor improvement: set node.ftable[0][2] = node.successor (for slight improvement in performance)
+            for interval in node.ftable:
+                i = interval[0]
+                start = interval[0] - 1
+                while (i % circleLength != start):
+                    # probably can optimize further by checking if nextNode's id is within other intervals as well
+                    if i in nodeIdList:
+                        nextNode = nodesList[nodeIdList.index(i)]
+                        interval.append(nextNode)
+                        break
+                    i += 1
                 # not taking into account edge case where there's only 1 node in the entire system
         
         for time in range(1000):

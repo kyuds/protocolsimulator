@@ -16,9 +16,13 @@ def simulate(args):
     if args.protocol == "chord": 
         for id in range(args.num_nodes):
             nodes.append(CNode(id, args.capacity, args.threshold, sc, rnd))
+        
         # create ID circle
         IDCircle = chord.idCircle(nodes)
-        # print(f"IDCircle is {IDCircle}")
+
+        # setup finger table
+        for node in nodes:
+            node.setFingerTable(IDCircle)
 
     elif args.protocol == "pot":
         for id in range(args.num_nodes):
