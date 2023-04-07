@@ -15,10 +15,7 @@ class CNode:
         # node state
         self.id = id
         self.numObjects = self.minCapacity
-
-        # add all nodes to fingertable
         self.ftable = []
-
 
         # node utils
         self.sc = statcollector
@@ -46,7 +43,6 @@ class CNode:
                     successor = idCircle[(start + i) % n]
                     break
             self.ftable.append([start, successor])
-        print(self.ftable)
     
     def run(self):
         pass
