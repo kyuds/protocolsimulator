@@ -13,6 +13,17 @@ class StatCollector:
     def nodeSpilledToDisk(self, node):
         if node.spilledToDisk:
             self.data[-1][2] += 1
+    
+    def printStats(self):
+        totalEpoch, totalQueries, totalDisk = 0, 0, 0
+        for ep, queries, disk in self.data:
+            print(f"Epoch {ep} queried {queries} \
+                  time and disk spilled {disk} times.")
+            totalEpoch += 1
+            totalQueries += queries
+            totalDisk += disk
+        print(f"Across {totalEpoch} epochs, there were \
+              {totalQueries} queries and {totalDisk} disk spills.")
 
 """
 ok so statcollector is going to store 3 variables per epoch (this is per balancing):

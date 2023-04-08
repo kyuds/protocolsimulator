@@ -13,6 +13,7 @@ class PNode:
         self.id = id
         self.numObjects = self.minCapacity
         self.otherNodes = []
+        self.searchedNodes = []
 
         # node utils
         self.rnd = rnd
@@ -37,9 +38,53 @@ class PNode:
     def resetStats(self):
         self.spilledToDisk = False
         self.numQueries = 0
+        self.otherNodes.extend(self.searchedNodes)
+        self.searchedNodes = []
 
     def __repr__(self):
         return "P" + str(self.id)
     
-    def run(self):
-        pass
+    def run(self, verbose=False):
+        target = None
+        numObjectsToSpill = self.numObjects - int(self.threshold * self.capacity)
+
+        if verbose:
+            print(f"Running: {self}")
+            print(f"Need to spill: {numObjectsToSpill}")
+    
+        if len(self.otherNodes) == 0:
+            if verbose:
+                print(f"No nodes to query. Spilling to disk.\n")
+            self.spilledToDisk = True
+            self.numObjects = int(self.threshold * self.capacity)
+            return
+        
+        if len(self.otherNodes) == 1:
+            target = self.otherNodes.pop(0)
+            self.searchedNodes.append(target)
+            self.numQueries += 1
+            if verbose:
+                print(f"Querying 1 node: {target}")
+        else:
+            idx1, idx2 = self.prnd.distinctPair(0, len(self.otherNodes))
+            # order is important as popping removes elements
+            n2 = self.otherNodes.pop(idx2)
+            n1 = self.otherNodes.pop(idx1)
+            self.searchedNodes.extend([n1, n2])
+            target = min([n1, n2], key=lambda x: x.numObjects)
+            self.numQueries += 2 # add two as we are searching two nodes.
+            if verbose:
+                print(f"Querying 2 nodes: {n1}, {n2}.")
+        
+        if target.numObjects + numObjectsToSpill <= int(target.threshold * target.capacity):
+            self.numObjects -= numObjectsToSpill
+            target.numObjects += numObjectsToSpill
+            if verbose:
+                print(f"Remotely spilled to {target}")
+                print(f"{target} numObjects before: {target.numObjects - numObjectsToSpill}")
+                print(f"{target} numObjects after:  {target.numObjects}")
+        elif verbose:
+            print(f"{target} too full.")
+        
+        if verbose:
+            print()

@@ -49,7 +49,7 @@ class CNode:
                     break
             self.ftable.append([start, successor])
     
-    def run(self):
+    def run(self, verbose=False):
         if self.numQueries == len(self.ftable):
             self.spilledToDisk = True
             self.numObjects = int(self.threshold * self.capacity)
