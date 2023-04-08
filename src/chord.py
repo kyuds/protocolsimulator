@@ -50,7 +50,16 @@ class CNode:
             self.ftable.append([start, successor])
     
     def run(self):
-        pass
+        if self.numQueries == len(self.ftable):
+            self.spilledToDisk = True
+            self.numObjects = int(self.threshold * self.capacity)
+        else:
+            spilltarget = self.ftable[self.numQueries][1]
+            spillamount = self.numObjects - self.threshold * self.capacity
+            if spilltarget.numObjects + spillamount <= spilltarget.threshold * spilltarget.capacity:
+                spilltarget.numObjects = int (spilltarget.numObjects + spillamount)
+                self.numObjects = int (self.numObjects - spillamount)
+            self.numQueries += 1
 
 # CHORD: Create 2d-array ID Circle
 # TODO: SHA-1 encoding

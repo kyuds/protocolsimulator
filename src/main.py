@@ -39,34 +39,34 @@ def simulate(args):
         print("Simulation name not supported.")
         return
 
-    # for _ in range(100):
-    #     for n in nodes:
-    #         n.shuffle()
-    #         print(n.numObjects)
+    for _ in range(100):
+        for n in nodes:
+            n.shuffle()
+            print(n.numObjects)
     
-    # for ep in range(args.total_epochs):
-    #     unbalanced = True
-    #     while unbalanced:
-    #         unbalanced = False
-    #         for n in nodes:
-    #             if n.needToSpill():
-    #                 unbalanced = True
-    #                 n.run()
+    for ep in range(args.total_epochs):
+        unbalanced = True
+        while unbalanced:
+            unbalanced = False
+            for n in nodes:
+                if n.needToSpill():
+                    unbalanced = True
+                    n.run()
         
-    #     sc.addEntry(ep)
-    #     for n in nodes:
-    #         sc.addQueryTime(n)
-    #         sc.nodeSpilledToDisk(n)
-    #         n.resetStats()
+        # sc.addEntry(ep)
+        # for n in nodes:
+        #     sc.addQueryTime(n)
+        #     sc.nodeSpilledToDisk(n)
+        #     n.resetStats()
         
-    #     for n in nodes:
-    #         n.shuffle()
+        # for n in nodes:
+        #     n.shuffle()
 
 if __name__=="__main__":
     # parse arguments
     parser = argparse.ArgumentParser(description="Settings for Protocol Simulator")
     parser.add_argument("--num-nodes", default=50, type=int, help="Number of nodes")
-    parser.add_argument("--protocol", default="pot", type=str, help="Type of protocol: chord/pot")
+    parser.add_argument("--protocol", default="chord", type=str, help="Type of protocol: chord/pot")
     parser.add_argument("--capacity", default=100, type=int, help="Object capacity")
     parser.add_argument("--threshold", default=0.9, type=float, help="Max memory fill before remote spill")
     parser.add_argument("--oscillate-period", default=10, type=float, help="Memory state change period")
