@@ -1,11 +1,13 @@
 # Class for Collecting Various Statistics
+import numpy as np
+import matplotlib.pyplot as plt
 
 class StatCollector:
     def __init__(self):
         self.data = []
     
     def addEntry(self, epoch: int):
-        self.data.append([epoch, 0, 0])
+        self.data.append([epoch, 0, 0, []])
     
     def addQueryTime(self, node):
         self.data[-1][1] += node.numQueries
@@ -14,16 +16,25 @@ class StatCollector:
         if node.spilledToDisk:
             self.data[-1][2] += 1
     
+    def addMemoryUsage(self, node):
+        self.data[-1][3].append(node.numObjects / node.capacity)
+    
     def printStats(self):
         totalEpoch, totalQueries, totalDisk = 0, 0, 0
-        for ep, queries, disk in self.data:
-            print(f"Epoch {ep} queried {queries} \
-                  time and disk spilled {disk} times.")
+        for ep, queries, disk, mem in self.data:
+            print(f"Epoch {ep} queried {queries} time and disk spilled {disk} times.")
             totalEpoch += 1
             totalQueries += queries
             totalDisk += disk
-        print(f"Across {totalEpoch} epochs, there were \
-              {totalQueries} queries and {totalDisk} disk spills.")
+        print(f"Across {totalEpoch} epochs, there were a total of {totalQueries} queries and {totalDisk} disk spills.")
+    
+    def generateMemoryGraph(self, protocol):
+        x = np.array([d[0] for d in self.data])
+        y = np.array([np.std(d[3]) for d in self.data])
+        plt.plot(x, y)
+        plt.savefig(protocol + ".jpg")
+        
+        
 
 """
 ok so statcollector is going to store 3 variables per epoch (this is per balancing):

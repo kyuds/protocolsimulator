@@ -42,6 +42,8 @@ def simulate(args):
     for _ in range(100):
         for n in nodes:
             n.shuffle()
+            if n.numObjects > int(1.5 * args.capacity):
+                n.numObjects = int(1.5 * args.capacity)
     
     for ep in range(args.total_epochs):
         unbalanced = True
@@ -56,20 +58,23 @@ def simulate(args):
         for n in nodes:
             sc.addQueryTime(n)
             sc.nodeSpilledToDisk(n)
+            sc.addMemoryUsage(n)
             n.resetStats()
         
         for n in nodes:
             n.shuffle()
+    
+    sc.printStats()
+    sc.generateMemoryGraph(args.protocol)
 
 if __name__=="__main__":
     # parse arguments
     parser = argparse.ArgumentParser(description="Settings for Protocol Simulator")
-    parser.add_argument("--num-nodes", default=50, type=int, help="Number of nodes")
+    parser.add_argument("--num-nodes", default=3000, type=int, help="Number of nodes")
     parser.add_argument("--protocol", default="pot", type=str, help="Type of protocol: chord/pot")
     parser.add_argument("--capacity", default=100, type=int, help="Object capacity")
     parser.add_argument("--threshold", default=0.9, type=float, help="Max memory fill before remote spill")
-    parser.add_argument("--oscillate-period", default=10, type=float, help="Memory state change period")
-    parser.add_argument("--total-epochs", default=1, type=float, help="Total number of epochs to simulate")
+    parser.add_argument("--total-epochs", default=10, type=float, help="Total number of epochs to simulate")
     parser.add_argument("--verbose", default=False, type=bool, help="Log queries")
 
     simulate(parser.parse_args())
