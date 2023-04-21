@@ -3,11 +3,11 @@ import numpy as np
 import random
 
 class CNode:
-    def __init__(self, id: int, capacity: int, threshold: float, rnd: Rnd):
+    def __init__(self, id: int, capacity: int, threshold: float, rnd: Rnd, osc: float):
         # node properties
         self.capacity = capacity
         self.minCapacity = int(0.1 * self.capacity)
-        self.osc = int(0.5 * self.capacity)
+        self.osc = int(osc * self.capacity)
         self.threshold = threshold # spill if threshold is exceeded
 
         # node state

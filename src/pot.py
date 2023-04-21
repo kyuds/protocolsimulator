@@ -1,12 +1,12 @@
 from utils import Rnd
 
 class PNode:
-    def __init__(self, id: int, capacity: int, threshold: float, 
+    def __init__(self, id: int, capacity: int, threshold: float, osc: float,
                  rnd: Rnd, prnd: Rnd):
         # node properties
         self.capacity = capacity
         self.minCapacity = int(0.1 * self.capacity)
-        self.osc = int(0.5 * self.capacity)
+        self.osc = int(osc * self.capacity)
         self.threshold = threshold # spill if threshold is exceeded
 
         # node state

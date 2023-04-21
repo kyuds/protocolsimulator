@@ -2,13 +2,9 @@ import argparse
 import numpy as np
 
 from pot import PNode
-from chord import CNode
+from chord import CNode, idCircle
 from utils import Rnd
 from statcollector import StatCollector
-
-# Class imports
-import chord
-import pot
 
 def simulate(args):
     nodes, rnd, sc = [], Rnd(0), StatCollector()
@@ -16,10 +12,10 @@ def simulate(args):
     # setup nodes based on simulation type
     if args.protocol == "chord": 
         for id in range(args.num_nodes):
-            nodes.append(CNode(id, args.capacity, args.threshold, rnd))
+            nodes.append(CNode(id, args.capacity, args.threshold, rnd, 0.5))
         
         # create ID circle
-        IDCircle = chord.idCircle(nodes)
+        IDCircle = idCircle(nodes)
 
         # setup finger table
         for node in nodes:
@@ -28,7 +24,7 @@ def simulate(args):
     elif args.protocol == "pot":
         prnd = Rnd(2)
         for id in range(args.num_nodes):
-            pnode = PNode(id, args.capacity, args.threshold, rnd, prnd)
+            pnode = PNode(id, args.capacity, args.threshold, 0.5, rnd, prnd)
             nodes.append(pnode)
         
         for id in range(args.num_nodes):
