@@ -44,7 +44,7 @@ def simulate(args):
             n.shuffle()
             if n.numObjects > int(1.5 * args.capacity):
                 n.numObjects = int(1.5 * args.capacity)
-    
+
     for ep in range(args.total_epochs):
         unbalanced = True
         while unbalanced:

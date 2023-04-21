@@ -7,7 +7,7 @@ class CNode:
         # node properties
         self.capacity = capacity
         self.minCapacity = int(0.1 * self.capacity)
-        self.osc = int(0.2 * self.capacity)
+        self.osc = int(0.5 * self.capacity)
         self.threshold = threshold # spill if threshold is exceeded
 
         # node state
